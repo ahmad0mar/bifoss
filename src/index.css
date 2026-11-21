@@ -1,0 +1,639 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  BIFOSS design system (UI plan, phase 3).
+  A free-software club's world: terminals, commit logs, READMEs, pull requests.
+  Plain, legible, a little technical, warm because the club is for beginners.
+  Orange is a signal, not a wash. Hex values live ONLY in this file and in tailwind.config.js.
+  Documented in README.md under "Design".
+*/
+@layer base {
+  :root {
+    /* iOS safe-area insets */
+    --safe-top:    env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left:   env(safe-area-inset-left, 0px);
+    --safe-right:  env(safe-area-inset-right, 0px);
+
+    /* ── Colour: four base values and one signal ── */
+    --paper: #F5F6F4;          /* page background (cool off-white, not cream) */
+    --ink: #101214;            /* text, headings, text on orange */
+    --rule: #D9DBD6;           /* dividers and decorative borders only (1.3:1 on paper) */
+    --terminal: #16181B;       /* code and terminal panels */
+    --orange-fill: #FF8500;    /* fills and highlights; always carries ink text */
+    --orange-ink: #9A4300;     /* orange used as text (6.1:1 on paper) */
+    --orange-ink-hover: #7A3500;
+
+    /* Derived, not new colours */
+    --muted: #5A5F66;          /* secondary text (5.9:1 on paper); also control borders (3:1+) */
+    --wash: color-mix(in srgb, var(--ink) 6%, var(--paper)); /* hover and inline-code fill */
+    --terminal-ink: #E6E8EB;   /* text on terminal (14.5:1) */
+    --terminal-dim: #9AA0A6;   /* comments on terminal (6.7:1) */
+    --terminal-rule: color-mix(in srgb, var(--terminal-ink) 16%, var(--terminal)); /* title-bar divider */
+    --danger: #B42318;         /* errors as text (6.1:1 on paper) */
+
+    /* Short aliases used by the CSS below and by Tailwind's `brand-*` colours */
+    --bg: var(--paper);
+    --border: var(--rule);
+
+    /* ── Type ── */
+    --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --font-display: 'Bricolage Grotesque', 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+    /* Scale: ratio 1.250 on a 17px body. Tailwind's text-* names map onto these (tailwind.config.js). */
+    --step-0: 1.0625rem;
+    --step-1: 1.328rem;
+    --step-2: 1.66rem;
+    --step-3: 2.075rem;
+    --step-4: 2.594rem;
+    --step-5: 3.24rem;
+    --step-6: 4.05rem;
+    --measure: 68ch;           /* longest line of running text */
+
+    /* ── Shape ── */
+    --radius: 0.5rem;          /* every control and card */
+    --radius-panel: 1rem;      /* the one larger shape: the hero terminal panel (phase 4) */
+
+    /* shadcn tokens (HSL channels), mapped onto the palette above */
+    --background: 90 10% 96%;              /* paper */
+    --foreground: 210 11% 7%;              /* ink */
+    --card: 90 10% 96%;
+    --card-foreground: 210 11% 7%;
+    --popover: 90 10% 96%;
+    --popover-foreground: 210 11% 7%;
+    --primary: 31 100% 50%;                /* orange fill */
+    --primary-foreground: 210 11% 7%;      /* ink */
+    --secondary: 90 5% 93%;                /* wash */
+    --secondary-foreground: 210 11% 7%;
+    --muted-bg: 90 5% 93%;
+    --muted-foreground: 215 6% 38%;        /* muted */
+    --accent: 90 5% 93%;
+    --accent-foreground: 26 100% 30%;      /* orange ink */
+    --destructive: 4 76% 40%;
+    --destructive-foreground: 90 10% 96%;
+    --input: 215 6% 38%;                   /* control borders need 3:1 */
+    --ring: 26 100% 30%;
+    --chart-1: 31 100% 50%;
+    --chart-2: 215 6% 38%;
+    --chart-3: 84 6% 85%;
+    --chart-4: 90 10% 96%;
+    --chart-5: 210 11% 7%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    color-scheme: light;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: var(--step-0);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  ::selection {
+    background: var(--orange-fill);
+    color: var(--ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--orange-ink);
+    outline-offset: 3px;
+  }
+
+  code,
+  kbd,
+  pre,
+  samp {
+    font-family: var(--font-mono);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Display type: plain ink, no gradient. */
+  .headline {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.08;
+    color: var(--ink);
+  }
+
+  .btn-brand,
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    min-height: 44px;
+    padding: 0.7rem 1.3rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    line-height: 1.2;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+
+  /* Primary: the signal. Ink on orange is 7.7:1. Hover flips to the terminal look. */
+  .btn-brand {
+    background: var(--orange-fill);
+    border-color: var(--orange-fill);
+    color: var(--ink);
+  }
+
+  .btn-brand:hover {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--orange-fill);
+  }
+
+  /* Secondary: an ink outline, no fill. */
+  .btn-ghost {
+    border-color: var(--ink);
+    color: var(--ink);
+    background: transparent;
+  }
+
+  .btn-ghost:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  /* Text link inside running text: deep orange, underlined, so it never relies on colour alone. */
+  .text-link {
+    color: var(--orange-ink);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    transition: color 0.15s ease;
+  }
+
+  .text-link:hover {
+    color: var(--orange-ink-hover);
+  }
+
+  /* Development-only flag (Todo.jsx renders nothing in production). */
+  .todo-flag {
+    display: inline-block;
+    border: 1px dashed var(--orange-ink);
+    color: var(--orange-ink);
+    border-radius: var(--radius);
+    padding: 0.15rem 0.6rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  /* Running text (blog posts, event pages, code of conduct). */
+  .prose-bifoss {
+    color: var(--ink);
+    line-height: 1.7;
+    max-width: var(--measure);
+    overflow-wrap: break-word;
+  }
+
+  .prose-bifoss h2 {
+    font-size: var(--step-2);
+    margin: 2.25rem 0 0.75rem;
+  }
+
+  .prose-bifoss h3 {
+    font-size: var(--step-1);
+    margin: 1.75rem 0 0.5rem;
+  }
+
+  .prose-bifoss p,
+  .prose-bifoss ul,
+  .prose-bifoss ol {
+    margin: 0 0 1rem;
+  }
+
+  .prose-bifoss ul {
+    list-style: disc;
+    padding-left: 1.4rem;
+  }
+
+  .prose-bifoss ol {
+    list-style: decimal;
+    padding-left: 1.4rem;
+  }
+
+  .prose-bifoss a {
+    color: var(--orange-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    font-weight: 600;
+  }
+
+  .prose-bifoss a:hover {
+    color: var(--orange-ink-hover);
+  }
+
+  /* Inline code */
+  .prose-bifoss code {
+    background: var(--wash);
+    border: 1px solid var(--rule);
+    border-radius: 0.25rem;
+    padding: 0.05rem 0.35rem;
+    font-size: 0.88em;
+    color: var(--ink);
+  }
+
+  /* Code blocks sit on the terminal colour. */
+  .prose-bifoss pre {
+    background: var(--terminal);
+    color: var(--terminal-ink);
+    border-radius: var(--radius);
+    padding: 1rem 1.1rem;
+    overflow-x: auto;
+    margin: 0 0 1.25rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .prose-bifoss pre code {
+    background: none;
+    border: 0;
+    padding: 0;
+    color: inherit;
+    font-size: inherit;
+  }
+
+  .prose-bifoss img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    margin: 0 0 1.25rem;
+  }
+
+  .prose-bifoss hr {
+    border: 0;
+    border-top: 1px solid var(--rule);
+    margin: 2rem 0;
+  }
+
+  .prose-bifoss blockquote {
+    border-left: 3px solid var(--orange-fill);
+    padding-left: 1rem;
+    color: var(--muted);
+    margin: 0 0 1rem;
+  }
+
+  /* ── Terminal panel (home hero). The one dark block on a light page. ── */
+  .terminal {
+    background: var(--terminal);
+    color: var(--terminal-ink);
+    border-radius: var(--radius-panel);
+    overflow: hidden;
+    font-family: var(--font-mono);
+  }
+
+  .terminal-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 44px;
+    padding: 0 1rem;
+    border-bottom: 1px solid var(--terminal-rule);
+    color: var(--terminal-dim);
+    font-size: 0.8125rem;
+  }
+
+  .terminal-dots {
+    display: inline-flex;
+    gap: 0.4rem;
+  }
+
+  .terminal-dots span {
+    width: 0.625rem;
+    height: 0.625rem;
+    border: 1px solid var(--terminal-dim);
+    border-radius: 9999px;
+  }
+
+  .terminal-bar-end {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .terminal-replay {
+    margin-right: -0.75rem;
+    min-height: 44px;
+    padding: 0 0.75rem;
+    border-radius: var(--radius);
+    color: var(--terminal-ink);
+    font: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.15s ease;
+  }
+
+  .terminal-replay:hover {
+    color: var(--orange-fill);
+  }
+
+  /* Focus ring on the dark panel: Deep orange would be 2.4:1 here, so use the fill. */
+  .terminal :focus-visible {
+    outline-color: var(--orange-fill);
+  }
+
+  .terminal-body {
+    padding: 1rem 1.25rem 1.25rem;
+    font-size: 0.8125rem;
+    line-height: 1.65;
+  }
+
+  @media (min-width: 640px) {
+    .terminal-body {
+      padding: 1.25rem 1.5rem 1.5rem;
+      font-size: 0.9375rem;
+    }
+  }
+
+  .terminal-line {
+    min-height: 1.65em;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .terminal-prompt {
+    margin-right: 0.6ch;
+    color: var(--orange-fill);
+    user-select: none;
+  }
+
+  .terminal-note {
+    color: var(--terminal-dim);
+  }
+
+  /* A still block while typing. It never blinks. */
+  .terminal-caret {
+    display: inline-block;
+    width: 0.6ch;
+    height: 1.1em;
+    margin-left: 1px;
+    background: var(--terminal-ink);
+    vertical-align: text-bottom;
+  }
+
+  /* ── Loading placeholder: a flat block that gently fades, no shimmer ── */
+  .skeleton {
+    background: var(--rule);
+    animation: skeleton-pulse 1.6s ease-in-out infinite;
+    border-radius: var(--radius);
+  }
+  @keyframes skeleton-pulse {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.55; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton { animation: none; }
+  }
+
+  /* Page entrance: opacity only, 150 ms. Reduced motion is handled in the base layer. */
+  .page-fade {
+    animation: page-fade 150ms ease-out both;
+  }
+  @keyframes page-fade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* ── Animated link underline (slide in from left) ── */
+  .link-animated {
+    position: relative;
+    text-decoration: none !important;
+  }
+  .link-animated::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 100%;
+    height: 1.5px;
+    background: var(--orange-ink);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 220ms ease-out;
+  }
+  .link-animated:hover::after { transform: scaleX(1); }
+
+  /* ── Keyboard navigation enhanced focus rings ── */
+  [data-kb-nav="true"] :focus-visible {
+    outline: 2.5px solid var(--orange-ink) !important;
+    outline-offset: 4px !important;
+  }
+
+  /* ── Liquid glass tab bar (components/LiquidTabBar.jsx, lib/liquidTabs.js) ── */
+  .lg-bar {
+    --count: 6;
+    position: relative;
+    height: 3.75rem;
+    width: min(92vw, calc(5.4rem * var(--count)));
+    border-radius: 9999px;
+    font-size: 1rem;
+    -webkit-backdrop-filter: blur(14px) saturate(1.8);
+    backdrop-filter: blur(14px) saturate(1.8);
+    box-shadow: 0 0 0 1px rgba(16, 18, 20, 0.06), 0 12px 32px -10px rgba(16, 18, 20, 0.22);
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  /* the logo chip beside the bar: same frosted glass, no tint */
+  .glass-chip {
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    border: 1px solid var(--rule);
+    border-radius: 9999px;
+    background: color-mix(in srgb, var(--paper) 78%, transparent);
+    -webkit-backdrop-filter: blur(14px) saturate(1.8);
+    backdrop-filter: blur(14px) saturate(1.8);
+    box-shadow: 0 12px 32px -10px rgba(16, 18, 20, 0.22);
+  }
+
+  .lg-ink {
+    display: none;
+    color: var(--muted);
+  }
+
+  /* the bar's glass; cut away under the drop when it is lifted */
+  .lg-skin {
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.4);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 0 rgba(0, 0, 0, 0.04);
+  }
+
+  .lg-drop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    border-radius: 9999px;
+    pointer-events: none;
+  }
+
+  .lg-pill {
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    background: color-mix(in srgb, var(--orange-fill) 14%, transparent);
+  }
+
+  .lg-row {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    padding: 0 4px;
+  }
+
+  .lg-row a {
+    -webkit-user-drag: none;
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    color: inherit;
+    text-decoration: none;
+    outline: none;
+  }
+
+  .lg-row a:focus-visible {
+    outline: 2px solid var(--orange-ink);
+    outline-offset: -3px;
+    border-radius: 9999px;
+  }
+
+  .lg-face {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2em;
+    color: var(--muted);
+    transition: color 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* LiquidTabBar.jsx reads --orange-ink at runtime, so this and the drop always match */
+  .lg-face.lit {
+    color: var(--orange-ink);
+  }
+
+  .lg-face svg {
+    display: block;
+    width: 1.5em;
+    height: 1.5em;
+  }
+
+  .lg-face span {
+    font-size: 0.68em;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0;
+  }
+
+  .lg-lens {
+    position: absolute;
+    z-index: 20;
+    pointer-events: none;
+  }
+
+  @media (max-width: 400px) {
+    .lg-face span { font-size: 0.64em; }
+  }
+}
+/* ── Scroll-linked word reveal (components/ScrollReveal.jsx) ──
+   --p (0 to 1) is set on the element as it scrolls through the viewport; --i is a word's index,
+   --n the word count. About three words are part-revealed at once (the 3s below). Without JS, --p
+   falls back to 1, so the text is simply there. */
+@layer components {
+  .reveal-word {
+    opacity: clamp(0.16, calc(0.16 + 0.84 * ((var(--p, 1) * (var(--n, 1) + 3) - var(--i, 0)) / 3)), 1);
+  }
+
+  /* ── Cursor ring (components/CursorRing.jsx): fine pointers only, the real cursor stays ── */
+  .cursor-ring {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 70;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 200ms ease;
+  }
+  .cursor-ring[data-visible='true'] { opacity: 1; }
+  .cursor-ring[data-field='true'] { opacity: 0; }
+
+  .cursor-ring i {
+    position: absolute;
+    left: -0.875rem;
+    top: -0.875rem;
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 2px solid var(--orange-fill);
+    border-radius: 9999px;
+    background: transparent;
+    transition: transform 180ms cubic-bezier(0.2, 0.7, 0.3, 1), background-color 180ms ease;
+  }
+  .cursor-ring[data-hover='true'] i {
+    transform: scale(1.7);
+    background: color-mix(in srgb, var(--orange-fill) 22%, transparent);
+  }
+  .cursor-ring[data-down='true'] i { transform: scale(0.7); }
+
+  @media print {
+    .cursor-ring { display: none; }
+  }
+}
